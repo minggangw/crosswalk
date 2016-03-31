@@ -35,7 +35,9 @@ solutions = [
       'src':
         crosswalk_git + '/chromium-crosswalk.git@' + chromium_crosswalk_rev,
       'src/v8':
-        crosswalk_git + '/v8-crosswalk.git@' + v8_crosswalk_rev,
+        'https://github.com/zliang7/v8.git@ae16d30afd8e62664f6b558e79aa88fcfa80b89a',
+      'src/v8/base/trace_event/common':
+        'https://chromium.googlesource.com/chromium/src/base/trace_event/common.git@e40c41030f44cbd5b6f54081436620f43c3bb08a',
 
       # Include Intel RSSDK headers and library loader for RealSense camera
       # support.
@@ -94,6 +96,15 @@ hooks = [
     ],
     'pattern': '.',
     'name': 'upstream_revision'
+  },
+
+  {
+    'action': [
+      'bash',
+      'src/xwalk/wasm/test/testgen.sh'
+    ],
+    'pattern': '.',
+    'name': 'wasmtestgen'
   },
 ]
 

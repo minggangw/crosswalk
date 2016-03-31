@@ -1,0 +1,55 @@
+// Copyright (c) 2013 Intel Corporation. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#include "base/command_line.h"
+#include "base/path_service.h"
+#include "base/strings/utf_string_conversions.h"
+#include "content/public/common/content_switches.h"
+#include "content/public/test/browser_test_utils.h"
+#include "net/base/filename_util.h"
+#include "v8/include/v8.h"
+#include "xwalk/runtime/browser/runtime.h"
+#include "xwalk/test/base/in_process_browser_test.h"
+
+using base::FilePath;
+using base::string16;
+
+class XWalkWasmTest : public InProcessBrowserTest {
+ protected:
+  XWalkWasmTest() {
+    PathService::Get(base::DIR_SOURCE_ROOT, &data_dir_);
+    data_dir_ = data_dir_
+              .Append(FILE_PATH_LITERAL("xwalk"))
+              .Append(FILE_PATH_LITERAL("wasm"))
+              .Append(FILE_PATH_LITERAL("test"))
+              .Append(FILE_PATH_LITERAL("data"));
+  }
+
+  void SetUpCommandLine(base::CommandLine* command_line) override {
+    // Suppose the --expose-wasm flag is enabled by default
+    std::string js_flags("--expose-gc --allow-natives-syntax");
+    if (command_line->HasSwitch(switches::kJavaScriptFlags)) {
+        js_flags += " ";
+        js_flags +=
+            command_line->GetSwitchValueASCII(switches::kJavaScriptFlags);
+    }
+    command_line->AppendSwitchASCII(switches::kJavaScriptFlags, js_flags);
+  }
+
+  const string16& RunTestFile(FilePath::StringPieceType name) {
+    GURL url = net::FilePathToFileURL(data_dir_.Append(name));
+    runtime_ = CreateRuntime(url);
+    content::WaitForLoadStop(runtime_->web_contents());
+
+    content::TitleWatcher title_watcher(runtime_->web_contents(), kPass);
+    title_watcher.AlsoWaitForTitle(kFail);
+    return title_watcher.WaitAndGetTitle();
+  }
+
+  FilePath data_dir_;
+  xwalk::Runtime* runtime_;
+
+  string16 kPass = base::ASCIIToUTF16("Pass");
+  string16 kFail = base::ASCIIToUTF16("Fail");
+};

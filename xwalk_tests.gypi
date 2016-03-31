@@ -10,6 +10,7 @@
         'extensions/extensions_tests.gyp:xwalk_extensions_unittest',
         'sysapps/sysapps_tests.gyp:xwalk_sysapps_browsertest',
         'sysapps/sysapps_tests.gyp:xwalk_sysapps_unittest',
+        'wasm/wasm_tests.gyp:xwalk_wasm_unittest',
       ],
       'conditions': [
         ['OS=="win"', {

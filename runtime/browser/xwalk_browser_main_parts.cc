@@ -126,8 +126,8 @@ void XWalkBrowserMainParts::PreMainMessageLoopStart() {
   // FIXME: Add comment why this is needed on Android.
   command_line->AppendSwitch(switches::kAllowFileAccessFromFiles);
 
-  // Enable SIMD.JS API by default.
-  std::string js_flags("--harmony-simd");
+  // Enable SIMD.JS and WASM API by default.
+  std::string js_flags("--harmony-simd --expose_wasm");
   if (command_line->HasSwitch(switches::kJavaScriptFlags)) {
     js_flags += " ";
     js_flags +=
